@@ -1,0 +1,91 @@
+#Загружено по установленному образу Centos7
+Filesystem                      Type      Size  Used Avail Use% Mounted on
+/dev/mapper/VolGroup00-LogVol00 ext4      9.8G  1.1G  8.2G  12% /
+devtmpfs                        devtmpfs  484M     0  484M   0% /dev
+tmpfs                           tmpfs     496M     0  496M   0% /dev/shm
+tmpfs                           tmpfs     496M  6.8M  490M   2% /run
+tmpfs                           tmpfs     496M     0  496M   0% /sys/fs/cgroup
+/dev/sda1                       xfs       1.9G  130M  1.8G   7% /boot
+/dev/mapper/VolGroup00-home     ext4      976M  2.6M  907M   1% /home
+/dev/mapper/VolGroup00-var      ext4      976M   99M  810M  11% /var
+tmpfs                           tmpfs     100M     0  100M   0% /run/user/0
+/dev/mapper/VolGroup00-mirrorlv ext4      477M  2.3M  445M   1% /mnt/target2
+/dev/mapper/ws0-ws0_lv1         btrfs     2.0G   17M  1.8G   1% /opt
+
+sysfs on /sys type sysfs (rw,nosuid,nodev,noexec,relatime,seclabel)
+proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
+devtmpfs on /dev type devtmpfs (rw,nosuid,seclabel,size=495372k,nr_inodes=123843,mode=755)
+securityfs on /sys/kernel/security type securityfs (rw,nosuid,nodev,noexec,relatime)
+tmpfs on /dev/shm type tmpfs (rw,nosuid,nodev,seclabel)
+devpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,seclabel,gid=5,mode=620,ptmxmode=000)
+tmpfs on /run type tmpfs (rw,nosuid,nodev,seclabel,mode=755)
+tmpfs on /sys/fs/cgroup type tmpfs (ro,nosuid,nodev,noexec,seclabel,mode=755)
+cgroup on /sys/fs/cgroup/systemd type cgroup (rw,nosuid,nodev,noexec,relatime,seclabel,xattr,release_agent=/usr/lib/systemd/systemd-cgroups-agent,name=systemd)
+pstore on /sys/fs/pstore type pstore (rw,nosuid,nodev,noexec,relatime)
+cgroup on /sys/fs/cgroup/cpu,cpuacct type cgroup (rw,nosuid,nodev,noexec,relatime,seclabel,cpuacct,cpu)
+cgroup on /sys/fs/cgroup/devices type cgroup (rw,nosuid,nodev,noexec,relatime,seclabel,devices)
+cgroup on /sys/fs/cgroup/freezer type cgroup (rw,nosuid,nodev,noexec,relatime,seclabel,freezer)
+cgroup on /sys/fs/cgroup/blkio type cgroup (rw,nosuid,nodev,noexec,relatime,seclabel,blkio)
+cgroup on /sys/fs/cgroup/hugetlb type cgroup (rw,nosuid,nodev,noexec,relatime,seclabel,hugetlb)
+cgroup on /sys/fs/cgroup/cpuset type cgroup (rw,nosuid,nodev,noexec,relatime,seclabel,cpuset)
+cgroup on /sys/fs/cgroup/pids type cgroup (rw,nosuid,nodev,noexec,relatime,seclabel,pids)
+cgroup on /sys/fs/cgroup/perf_event type cgroup (rw,nosuid,nodev,noexec,relatime,seclabel,perf_event)
+cgroup on /sys/fs/cgroup/net_cls,net_prio type cgroup (rw,nosuid,nodev,noexec,relatime,seclabel,net_prio,net_cls)
+cgroup on /sys/fs/cgroup/memory type cgroup (rw,nosuid,nodev,noexec,relatime,seclabel,memory)
+configfs on /sys/kernel/config type configfs (rw,relatime)
+/dev/mapper/VolGroup00-LogVol00 on / type ext4 (rw,relatime,seclabel,data=ordered)
+selinuxfs on /sys/fs/selinux type selinuxfs (rw,relatime)
+systemd-1 on /proc/sys/fs/binfmt_misc type autofs (rw,relatime,fd=22,pgrp=1,timeout=0,minproto=5,maxproto=5,direct,pipe_ino=10443)
+mqueue on /dev/mqueue type mqueue (rw,relatime,seclabel)
+hugetlbfs on /dev/hugepages type hugetlbfs (rw,relatime,seclabel)
+debugfs on /sys/kernel/debug type debugfs (rw,relatime)
+/dev/sda1 on /boot type xfs (rw,relatime,seclabel,attr2,inode64,noquota)
+/dev/mapper/VolGroup00-home on /home type ext4 (rw,relatime,seclabel,data=ordered)
+/dev/mapper/VolGroup00-var on /var type ext4 (rw,relatime,seclabel,data=ordered)
+tmpfs on /run/user/0 type tmpfs (rw,nosuid,nodev,relatime,seclabel,size=101552k,mode=700)
+/dev/mapper/VolGroup00-mirrorlv on /mnt/target2 type ext4 (rw,relatime,seclabel,data=ordered)
+/dev/mapper/ws0-ws0_lv1 on /opt type btrfs (rw,relatime,seclabel,space_cache,subvolid=5,subvol=/)
+
+  LV       VG         Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+  LogVol00 VolGroup00 -wi-ao----  10.00g
+  LogVol01 VolGroup00 -wi-ao----   1.86g
+  home     VolGroup00 owi-aos---   1.00g
+  mirrorlv VolGroup00 rwi-aor--- 500.00m                                    100.00
+  snapTest VolGroup00 swi-a-s--- 200.00m      home   0.02
+  var      VolGroup00 -wi-ao----   1.00g
+  ws0_lv1  ws0        -wi-ao----   2.00g
+  ws0_lv2  ws0        -wi-a-----   2.00g
+
+ VG         #PV #LV #SN Attr   VSize   VFree
+  VolGroup00   3   6   1 wz--n-  15.72g 696.00m
+  ws0          1   2   0 wz--n- <40.00g <36.00g
+
+NAME                             MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda                                8:0    0   40G  0 disk
+├─sda1                             8:1    0  1.9G  0 part /boot
+└─sda2                             8:2    0 11.9G  0 part
+  ├─VolGroup00-LogVol00          253:0    0   10G  0 lvm  /
+  └─VolGroup00-LogVol01          253:1    0  1.9G  0 lvm  [SWAP]
+sdb                                8:16   0   40G  0 disk
+├─sdb1                             8:17   0  1.9G  0 part
+│ ├─VolGroup00-home-real         253:2    0    1G  0 lvm
+│ │ ├─VolGroup00-home            253:3    0    1G  0 lvm  /home
+│ │ └─VolGroup00-snapTest        253:5    0    1G  0 lvm
+│ ├─VolGroup00-snapTest-cow      253:4    0  200M  0 lvm
+│ │ └─VolGroup00-snapTest        253:5    0    1G  0 lvm
+│ ├─VolGroup00-mirrorlv_rmeta_0  253:7    0    4M  0 lvm
+│ │ └─VolGroup00-mirrorlv        253:11   0  500M  0 lvm  /mnt/target2
+│ └─VolGroup00-mirrorlv_rimage_0 253:8    0  500M  0 lvm
+│   └─VolGroup00-mirrorlv        253:11   0  500M  0 lvm  /mnt/target2
+└─sdb2                             8:18   0    2G  0 part
+  ├─VolGroup00-var               253:6    0    1G  0 lvm  /var
+  ├─VolGroup00-mirrorlv_rmeta_1  253:9    0    4M  0 lvm
+  │ └─VolGroup00-mirrorlv        253:11   0  500M  0 lvm  /mnt/target2
+  └─VolGroup00-mirrorlv_rimage_1 253:10   0  500M  0 lvm
+    └─VolGroup00-mirrorlv        253:11   0  500M  0 lvm  /mnt/target2
+sdc                                8:32   0   40G  0 disk
+└─sdc1                             8:33   0   40G  0 part
+  ├─ws0-ws0_lv1                  253:12   0    2G  0 lvm  /opt
+  └─ws0-ws0_lv2                  253:13   0    2G  0 lvm
+sr0                               11:0    1 1024M  0 rom
+                                         
