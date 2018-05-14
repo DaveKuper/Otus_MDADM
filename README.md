@@ -1,4 +1,5 @@
-#Otus_MDADM
+# Otus_MDADM
+
 yum install vim xfsdump -y
 
 pvcreate /dev/sdb
@@ -15,22 +16,22 @@ xfsdump -f /tmp/root.dump /dev/VolGroup00/LogVol00
 
 xfsrestore -f /tmp/root.dump /mnt/
 
-# for i in /proc/ /sys/ /dev/ /run/ /boot/;
+> for i in /proc/ /sys/ /dev/ /run/ /boot/;
 
 > do mount --bind $i /mnt/$i;
 
->done
+> done
 
 
 chroot /mnt/
 
 cd /boot/
 
-#for i in `ls initramfs-*img`;
+> for i in `ls initramfs-*img`;
 
->do dracut -v $i `echo $i|sed "s/initramfs-//g; s/.img//g"` --force;
+> do dracut -v $i `echo $i|sed "s/initramfs-//g; s/.img//g"` --force;
 
->done
+> done
 
 Редактируем /boot/grub2/grub.cfg rd.lvm.lv=<VG>/<LV>
 
@@ -48,21 +49,21 @@ xfsdump -f /tmp/root.dump /dev/testroot/lvroot
 
 xfsrestore -f /tmp/root.dump /mnt/
 
-# for i in /proc/ /sys/ /dev/ /run/ /boot/;
+> for i in /proc/ /sys/ /dev/ /run/ /boot/;
 
 > do mount --bind $i /mnt/$i;
 
->done
+> done
 
 chroot /mnt/
 
 cd /boot/
 
-#for i in `ls initramfs-*img`;
+> for i in `ls initramfs-*img`;
 
->do dracut -v $i `echo $i|sed "s/initramfs-//g; s/.img//g"` --force;
+> do dracut -v $i `echo $i|sed "s/initramfs-//g; s/.img//g"` --force;
 
->done
+> done
 
 Редактируем /boot/grub2/grub.cfg rd.lvm.lv=<VG>/<LV>
 
