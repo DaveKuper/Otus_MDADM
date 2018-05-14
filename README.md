@@ -16,68 +16,120 @@ xfsdump -f /tmp/root.dump /dev/VolGroup00/LogVol00
 xfsrestore -f /tmp/root.dump /mnt/
 
 # for i in /proc/ /sys/ /dev/ /run/ /boot/;
+
 > do mount --bind $i /mnt/$i;
+
 >done
 
+
 chroot /mnt/
+
 cd /boot/
+
 #for i in `ls initramfs-*img`;
+
 >do dracut -v $i `echo $i|sed "s/initramfs-//g; s/.img//g"` --force;
+
 >done
 
 Редактируем /boot/grub2/grub.cfg rd.lvm.lv=<VG>/<LV>
+
 reboot
+
 lvremove /dev/VolGroup00/LogVol00
+
 lvcreate -n LogVol00 -L 8G /dev/VolGroup00
+
 mkfs.xfs /dev/VolGroup00/LogVol00
+
 mount /dev/VolGroup00/LogVol00 /mnt/
+
 xfsdump -f /tmp/root.dump /dev/testroot/lvroot
+
 xfsrestore -f /tmp/root.dump /mnt/
 
 # for i in /proc/ /sys/ /dev/ /run/ /boot/;
+
 > do mount --bind $i /mnt/$i;
+
 >done
 
 chroot /mnt/
+
 cd /boot/
+
 #for i in `ls initramfs-*img`;
+
 >do dracut -v $i `echo $i|sed "s/initramfs-//g; s/.img//g"` --force;
+
 >done
+
 Редактируем /boot/grub2/grub.cfg rd.lvm.lv=<VG>/<LV>
+
 reboot
   
 # Var под mirror
+
 lvremove /dev/testroot/lvroot
+
 vgremove testroot
+
 pvcreate /dev/sdb /dev/sdc
+
 vgcreate varmirror /dev/sdb /dev/sdc
+
 lvcreate -L 950M -m1 -n lvvarmirror varmirror
+
 mkfs.ext4 /dev/varmirror/lvvarmirror
+
 mount /dev/varmirror/lvvarmirror /mnt/
+
 cp -aR /var/* /mnt/
+
 mkdir /tmp/oldvar/
+
 mv /var/* /tmp/oldvar/
+
 umount /mnt/
+
 mount /dev/varmirror/lvvarmirror /var/
+
 Изменяем файл vim /etc/fstab
+
 reboot
+
 # Топ под home
+
 lvcreate -n secondhome -L 2G VolGroup00
+
 mkfs.xfs /dev/VolGroup00/secondhome
+
 mount /dev/VolGroup00/secondhome /mnt/
+
 cp -aR /home/* /mnt/
+
 cd mnt/
+
 rm -rf /home/*
+
 umount /mnt/
+
 mount /dev/VolGroup00/secondhome /home/
+
 vim /etc/fstab
 
 # Снэпшоты
+
 touch /home/test{1..100}
+
 lvcreate -L 2GB -s -n home_snap /dev/VolGroup00/secondhome
+
 rm -f /home/test{1..50}
+
 umount /home
+
 lvconvert --merge /dev/VolGroup00/home_snap
+
 mount /home
 
 # Итог
