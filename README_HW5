@@ -1,0 +1,51 @@
+#!/bin/bash
+#Скрипт с перезагрузкой процесса и отсылкой email
+systemctl status sshd > /home/hopbut/script/infossh
+
+MYMAIL=a.fomenko443@gmail.com
+#Отправка сообщения на почту
+sendemail -m "InfoServiceSSH" -t $MYMAIL -s smtp.gmail.com:587 -a /home/hopbut/script/infossh
+
+a=$(cat /home/hopbut/script/ping | head -n3 | tail -n1 | awk '{b= $2 $3; print b}')
+echo $a
+rm /home/hopbut/script/infossh
+#Проверка статуса службы
+if [ $a == "active(running)" ];
+then
+   echo "Служба SSH активна. Что необходимо сделать с данной службой |1.Status|2.Start|3.Restart|4.Оставить все как есть|?"
+   read Chose
+   case $Chose in
+        1)
+         systemctl status sshd ;;
+        2)
+         systemctl start sshd ;;
+        3)
+         systemctl restart sshd
+         echo "Служба перезапущена" ;;
+        4)
+         echo "Оставили как есть" ;;
+   esac
+else
+echo "Служба SSH неактивна. Что необходимо сделать с данной службой |1.Status|2.Start|3.Restart|4.Оставить все как есть|?"
+   read Chose
+   case $Chose in
+        1)
+         systemctl status sshd ;;
+        2)
+         systemctl start sshd ;;
+        3)
+         systemctl restart sshd
+         echo "Служба перезапущена" ;;
+        4)
+         echo "Оставили как есть" ;;
+   esac
+
+#Анализ логов
+echo -e "\nВывод top c сортировкой по использованию MEM\n\n" >> /tmp/system_load_analize.log
+top -b -o +%MEM -n 1 | sed 1,6d | head -10 >> /tmp/system_load_analize.log
+echo -e "\nВывод top c сортировкой по использованию CPU\n\n" >> /tmp/system_load_analize.log
+top -b -o +%CPU -n 1 | sed 1,6d | head -10 >> /tmp/system_load_analize.log
+cat /tmp/system_load_analize.log
+c= curl -s -w %{time_total}\\n -o /dev/null yandex.ru #скорость ответа сайта
+echo $c #вывод информации
+
