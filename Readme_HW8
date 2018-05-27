@@ -62,13 +62,13 @@ fi
 %changelog
 
 #cd ~/rpmbuild/SOURCE
-#wget http://mirror.linux-ia64.org/apache//httpd/httpd-2.4.33.tar.gz
+#wget https://ftp.gnu.org/gnu/hello/hello-2.8.tar.gz
 #cd ~/rpmbuild/SPEC
 #rpmbuild -ba hello.spec
 
 Creating own local repository
 #sudo mkdir -p /share/CentOS/7/local/x86_64/RPMS
-#sudo mv /home/hopbut/rpmbuild/RPMS/x86_64/hello-2.8-1.x86_64.rpm /share/CentOS/7/local/x86_64/RPMS/
+#sudo mv /root/rpmbuild/RPMS/x86_64/hello-2.8-1.x86_64.rpm /share/CentOS/7/local/x86_64/RPMS/
 #sudo chown -R hopbut.hopbut /share/CentOS/7/local
 #createrepo /share/CentOS/7/local/x86_64
 #chmod -R o-w+r /share/CentOS/7/local
