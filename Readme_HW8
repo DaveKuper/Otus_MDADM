@@ -1,0 +1,87 @@
+Creating own rpm
+#rpmdev-setuptree
+drwxrwxr-x.  8 hopbut hopbut   89 May 25 18:05 .
+drwx------. 27 hopbut hopbut 4096 May 27 02:45 ..
+drwxrwxr-x.  7 hopbut hopbut  100 May 26 16:19 BUILD
+drwxr-xr-x.  4 hopbut hopbut   70 May 26 16:19 BUILDROOT
+drwxrwxr-x.  3 hopbut hopbut   20 May 26 16:19 RPMS
+drwxrwxr-x.  2 hopbut hopbut  104 May 26 16:04 SOURCES
+drwxrwxr-x.  2 hopbut hopbut  120 May 26 16:19 SPECS
+drwxrwxr-x.  2 hopbut hopbut   33 May 26 16:19 SRPMS
+#cd ~/rpmbuild/SPEC
+#rpmdev-newspec hello
+#vim hello.spec
+Name:           hello
+Version:        2.8
+Release:        1
+Summary:        The "Hello World" program from GNU
+
+License:        GPLv3+
+URL:            http://ftp.gnu.org/gnu/%{name}
+Source0:        http://ftp.gnu.org/gnu/%{name}/%{name}-%{version}.tar.gz
+
+BuildRequires:  gettext
+Requires(post): info
+Requires(preun): info
+
+%description
+Program "Hello World"
+
+%prep
+%autosetup
+
+
+%build
+%configure
+make %{?_smp_mflags}
+
+
+%install
+%make_install
+%find_lang %{name}
+rm -f %{buildroot}/%{_infodir}/dir
+
+%post
+/sbin/install-info %{_infodir}/%{name}.info %{_infodir}/dir || :
+
+%preun
+if [ $1 = 0 ] ; then
+/sbin/install-info --delete %{_infodir}/%{name}.info %{_infodir}/dir || :
+fi
+
+%files -f %{name}.lang
+%{_mandir}/man1/hello.1.*
+%{_infodir}/hello.info.*
+%{_bindir}/hello
+
+%doc AUTHORS ChangeLog NEWS README THANKS TODO
+%license COPYING
+
+
+
+%changelog
+
+#cd ~/rpmbuild/SOURCE
+#wget http://mirror.linux-ia64.org/apache//httpd/httpd-2.4.33.tar.gz
+#cd ~/rpmbuild/SPEC
+#rpmbuild -ba hello.spec
+
+Creating own local repository
+#sudo mkdir -p /share/CentOS/7/local/x86_64/RPMS
+#sudo mv /home/hopbut/rpmbuild/RPMS/x86_64/hello-2.8-1.x86_64.rpm /share/CentOS/7/local/x86_64/RPMS/
+#sudo chown -R hopbut.hopbut /share/CentOS/7/local
+#createrepo /share/CentOS/7/local/x86_64
+#chmod -R o-w+r /share/CentOS/7/local
+#cd /etc/yum.repos.d/
+#vim local.repo
+[local]
+name=CentOS-$releasever - local packages for $basearch
+baseurl=file:///share/CentOS/$releasever/local/$basearch
+enabled=1
+gpgcheck=0
+protect=1
+#yum repolist
+local/7/x86_64            CentOS-7 - local packages for x86_64                          1
+#yum install hello
+
+
