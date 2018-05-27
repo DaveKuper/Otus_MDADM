@@ -1,5 +1,5 @@
 Name:           hello
-Version:        2.8
+Version:        2.4.33
 Release:        1
 Summary:        The "Hello World" program from GNU
 
