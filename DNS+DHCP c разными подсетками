@@ -1,0 +1,68 @@
+1.Изначально развернем 3 виртуальные машины с помощью Vagrant. Пример файла в конце инструкции.
+2.Отредактируем файл sshd_conf на виртуальных машинах созданных с помощью Vagrant.
+  Убираем # со строк:
+   PermitRootLogin yes
+   PublicAuthentification yes
+   PasswordAuthentification yes
+3.Перезагружаем службу ssh
+  systemctl restart sshd
+4.Меняем имя машины - hostname
+  hostnamectl set-hostname server1.example.com - ""ПОПРАВИТЬ""
+5.Перезагружаем службу
+  systemctl status systemd-hostnamed
+6.Проверяем что служба активна.
+  
+● systemd-hostnamed.service - Hostname Service
+   Loaded: loaded (/usr/lib/systemd/system/systemd-hostnamed.service; static; vendor preset: disabled)
+   Active: active (running) since Sun 2018-07-08 14:40:28 UTC; 7s ago
+     Docs: man:systemd-hostnamed.service(8)
+           man:hostname(5)
+           man:machine-info(5)
+           http://www.freedesktop.org/wiki/Software/systemd/hostnamed
+ Main PID: 1572 (systemd-hostnam)
+   CGroup: /system.slice/systemd-hostnamed.service
+           └─1572 /usr/lib/systemd/systemd-hostnamed
+
+Jul 08 14:40:28 server1.example.com systemd[1]: Starting Hostname Service...
+Jul 08 14:40:28 server1.example.com systemd[1]: Started Hostname Service.
+7.Проверяем что имя виртуальной машины изменено командой hostnamectl.
+ 
+   Static hostname: server1.example.com
+         Icon name: computer-vm
+           Chassis: vm
+        Machine ID: 7450a1afffdc4a23875b702d66121859
+           Boot ID: 36f32541d3e5472989ca526d11704b15
+    Virtualization: kvm
+  Operating System: CentOS Linux 7 (Core)
+       CPE OS Name: cpe:/o:centos:centos:7
+            Kernel: Linux 3.10.0-862.2.3.el7.x86_64
+      Architecture: x86-64
+8. Для работы нам будет необходимо 2 интерфейса(виртуальные сетевые карты):
+   1.Для подключения по ssh и выхода в интернет - карта Bridge Adapter name wlp2s0
+   2.Для внутренней сети - карта Internal Network name intnet
+9. Проверим что наши интерфейсы отобразились командой ip a
+    lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+    eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 52:54:00:c9:c7:04 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.1.237/24 brd 192.168.1.255 scope global noprefixroute dynamic eth0
+       valid_lft 468sec preferred_lft 468sec
+    inet6 fe80::5054:ff:fec9:c704/64 scope link 
+       valid_lft forever preferred_lft forever
+    eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 08:00:27:d2:e8:a2 brd ff:ff:ff:ff:ff:ff
+    inet6 fe80::a00:27ff:fed2:e8a2/64 scope link 
+       valid_lft forever preferred_lft forever
+       
+    lo – это устройство петли. Вы можете представить это как виртуальное сетевое устройство, которое находится на всех системах, даже если они не подключены к какой-либо сети. 
+    Он имеет IP-адрес 127.0.0.1 и может использоваться для локального доступа к сетевым службам. 
+    Например, если вы запустите веб-сервер на своем компьютере и перейдете к нему с помощью Firefox или Chromium на том же компьютере, то он пройдет через это сетевое устройство.
+    eth0 - Bridge adapter
+    eth1 - Интерфейс внутренней сети.
+ 
+  
+  
