@@ -63,6 +63,146 @@ Jul 08 14:40:28 server1.example.com systemd[1]: Started Hostname Service.
     Например, если вы запустите веб-сервер на своем компьютере и перейдете к нему с помощью Firefox или Chromium на том же компьютере, то он пройдет через это сетевое устройство.
     eth0 - Bridge adapter
     eth1 - Интерфейс внутренней сети.
+ 10.Проводим настройку сетевого интерфейса внутренней сети eth1
+    sudo vim /etc/network/interfaces
+    auto lo
+    iface lo inet loopback
+    auto eth0
+    iface eth0 inet dhcp
+    auto eth1
+    iface eth1 inet static
+    address 192.168.4.60
+    netmask 255.255.255.0
+    #inet - адрессное пространство для сетей протоколов ipv4
+    #iface - сокращенно interface
+    #auto <имя> - интерфейс должен быть настроен во время загрузки
+    №№№№№№№№№№№Разобраться и доделать
+ 11.Устанавливаем dns server bind9
+    sudo apt-get install bind9 bind9utils -y
+ 12.Создание 2ух зон
+    sudo vim /etc/bind/named.conf.local
+    zone "example.com" IN {
+    type master;
+    file "etc/bind/forward.example.com";
+    };
+
+    zone "4.168.192.in-addr.arpa" IN {
+    type master;
+    file "/etc/bind/reverse.example.com";
+    }; 
+ 13.Редактируем файл forward.example.com
+    ;
+    ; BIND data file for local loopback interface
+    ;
+    $TTL    604800
+    @       IN      SOA     server1.example.com. root.server1.example.com. (
+                              2         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+    ;
+    @       IN      NS      server1.example.com.
+    @       IN      A       192.168.4.60
+    server  IN      A       192.168.4.60
+    host    IN      A       192.168.4.60
+    client  IN      A       192.168.4.61
+    www     IN      A       192.168.4.61
+ 14. Создаем файл reverse.example.com
+    sudo cp forward.example.com reverse.example.com
+    ;
+    ; BIND data file for local loopback interface
+    ;
+    $TTL    604800
+    @       IN      SOA     server1.example.com. root.server1.example.com. (
+                              2         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+    ;
+    @       IN      NS      server1.example.com.
+    @       IN      PtR     example.com.
+    server  IN      A       192.168.4.60
+    host    IN      A       192.168.4.60
+    client  IN      A       192.168.4.61
+    www     IN      A       192.168.4.61
+    11      IN      PTR     server1.example.com.
+    12      IN      PTR     client.example.com.
+ 15. Проверка правильности синтаксиса файла named.conf
+    named-checkconf проверяет синтаксис, но не семантику именованного
+    конфигурационного файла. Если файл явно не указан то по дефолту /etc/named.conf
+    sudo named-checkconf -z /etc/bind/named.conf
+
+ 16. Проверка правильности синтаксиса forward
+     sudo named-checkconf forward /etc/bind/forward.example.com
+ 17. Проверка правильности синтаксиса reverse
+     sudo named-checkconf reverse /etc/bind/reverse.example.com
+ 18. Запускаем службу dns-server bind9
+     sudo systemctl start bind9
+     ● bind9.service - BIND Domain Name Server
+   Loaded: loaded (/lib/systemd/system/bind9.service; enabled; vendor preset: en
+   Active: active (running) since Sun 2018-07-08 18:29:09 UTC; 57min ago
+     Docs: man:named(8)
+ Main PID: 952 (named)
+    Tasks: 4 (limit: 1112)
+   CGroup: /system.slice/bind9.service
+           └─952 /usr/sbin/named -f -u bind
+
+Jul 08 18:29:12 server1.example.com named[952]: network unreachable resolving '.
+Jul 08 18:29:12 server1.example.com named[952]: managed-keys-zone: Key 19036 for
+Jul 08 18:29:12 server1.example.com named[952]: managed-keys-zone: Key 20326 for
+Jul 08 18:29:13 server1.example.com named[952]: resolver priming query complete
+Jul 08 18:29:13 server1.example.com named[952]: checkhints: b.root-servers.net/A
+Jul 08 18:29:13 server1.example.com named[952]: checkhints: b.root-servers.net/A
+Jul 08 18:29:13 server1.example.com named[952]: checkhints: b.root-servers.net/A
+Jul 08 18:29:13 server1.example.com named[952]: checkhints: b.root-servers.net/A
+Jul 08 18:29:13 server1.example.com named[952]: checkhints: l.root-servers.net/A
+Jul 08 18:29:13 server1.example.com named[952]: checkhints: l.root-servers.ne
+ 19. Меняем владельца директории /etc/bind/
+    sudo chown -R /etc/bindtotal 68
+drwxr-sr-x  2 bind bind 4096 Jul  8 19:10 .
+drwxr-xr-x 96 root root 4096 Jul  8 18:29 ..
+-rw-r--r--  1 bind bind 2761 Jun 11 13:41 bind.keys
+-rw-r--r--  1 bind bind  237 Mar 23 15:53 db.0
+-rw-r--r--  1 bind bind  271 Mar 23 15:53 db.127
+-rw-r--r--  1 bind bind  237 Mar 23 15:53 db.255
+-rw-r--r--  1 bind bind  353 Mar 23 15:53 db.empty
+-rw-r--r--  1 bind bind  270 Mar 23 15:53 db.local
+-rw-r--r--  1 bind bind 3171 Mar 23 15:53 db.root
+-rw-r--r--  1 bind bind  438 Jul  8 19:04 forward.example.com
+-rw-r--r--  1 bind bind  463 Mar 23 15:53 named.conf
+-rw-r--r--  1 bind bind  490 Mar 23 15:53 named.conf.default-zones
+-rw-r--r--  1 bind bind  525 Jul  8 19:06 named.conf.local
+-rw-r--r--  1 bind bind  890 Mar 23 15:53 named.conf.options
+-rw-r--r--  1 bind bind  528 Jul  8 19:10 reverse.example.com
+-rw-r-----  1 bind bind   77 Jul  8 18:24 rndc.key
+-rw-r--r--  1 bind bind 1317 Mar 23 15:53 zones.rfc1918
+  20. Изменяем тип доступа /etc/bind/
+      sudo chmod 755 -R /etc/bind/drwxr-sr-x  2 bind bind 4096 Jul  8 19:10 .
+drwxr-xr-x 96 root root 4096 Jul  8 18:29 ..
+-rwxr-xr-x  1 bind bind 2761 Jun 11 13:41 bind.keys
+-rwxr-xr-x  1 bind bind  237 Mar 23 15:53 db.0
+-rwxr-xr-x  1 bind bind  271 Mar 23 15:53 db.127
+-rwxr-xr-x  1 bind bind  237 Mar 23 15:53 db.255
+-rwxr-xr-x  1 bind bind  353 Mar 23 15:53 db.empty
+-rwxr-xr-x  1 bind bind  270 Mar 23 15:53 db.local
+-rwxr-xr-x  1 bind bind 3171 Mar 23 15:53 db.root
+-rwxr-xr-x  1 bind bind  438 Jul  8 19:04 forward.example.com
+-rwxr-xr-x  1 bind bind  463 Mar 23 15:53 named.conf
+-rwxr-xr-x  1 bind bind  490 Mar 23 15:53 named.conf.default-zones
+-rwxr-xr-x  1 bind bind  525 Jul  8 19:06 named.conf.local
+-rwxr-xr-x  1 bind bind  890 Mar 23 15:53 named.conf.options
+-rwxr-xr-x  1 bind bind  528 Jul  8 19:10 reverse.example.com
+-rwxr-xr-x  1 bind bind   77 Jul  8 18:24 rndc.key
+-rwxr-xr-x  1 bind bind 1317 Mar 23 15:53 zones.rfc1918
+ 21. Перезагружаем сервис bind
+    sudo systemctl restart bind9
+ 22.
+      
+
+      
+
  
   
   
